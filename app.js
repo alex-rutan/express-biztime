@@ -2,6 +2,7 @@
 
 const express = require("express");
 const { NotFoundError } = require("./expressError");
+
 const morgan = require('morgan');
 const companyRoutes = require("./companyRoutes");
 
@@ -10,12 +11,8 @@ const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
 
-
 // apply a prefix to every route in itemRoutes
 app.use("/companies", companyRoutes);
-
-
-
 
 
 
