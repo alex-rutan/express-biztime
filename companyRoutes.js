@@ -22,7 +22,7 @@ router.get("/", async function (req, res, next) {
 });
 
 /** GET /companies/[code]: Return obj of company: 
- * {company: {code, name, description, invoices: [id, ...]}} */
+ * {company: {code, name, description, invoices: [id, ...], industries : [{}]}} */
 
 router.get("/:code", async function (req, res, next) {
   const code = req.params.code
@@ -40,12 +40,23 @@ router.get("/:code", async function (req, res, next) {
      WHERE comp_code = $1`,
      [code]
   );
+
+    const indResults = await db.query(
+        `SELECT industries.code
+        FROM industries
+        JOIN industries_companies ON industries.code = ind_code
+        JOIN companies ON companies.code = comp_code
+        WHERE companies.code = $1`,
+        [code]
+    );
+  
   
   if (!company) {
     throw new NotFoundError();
   }
   
   company.invoices = invResults.rows;
+  company.industries = indResults.rows.map(r => r.code);
 
   return res.json({ company });
 });

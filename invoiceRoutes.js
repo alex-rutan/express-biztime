@@ -76,28 +76,29 @@ router.post("/", async function (req, res, next) {
 
 router.put("/:id", async function (req, res, next) {
     const id = req.params.id;
-    const { amt } = req.body;
-    /*
     const { amt, paid } = req.body;
-    
+    let results;
     if (paid) {
-      const results = await db.query(
+      results = await db.query(
         `UPDATE invoices
             SET amt = $1, 
-                paid = $3
+                paid = $3,
+                paid_date = CURRENT_DATE
             WHERE id = $2
             RETURNING id, comp_code, amt, paid, add_date, paid_date`,
         [amt, id, paid]
       ); 
-    }
-    */
-    const results = await db.query(
-        `UPDATE invoices
-            SET amt = $1
+    } else {
+        results = await db.query(
+            `UPDATE invoices
+            SET amt = $1,
+                paid = $3,
+                paid_date = NULL
             WHERE id = $2
             RETURNING id, comp_code, amt, paid, add_date, paid_date`,
-        [amt, id]
-    );
+            [amt, id, paid]
+        );
+    }
 
     const invoice = results.rows[0];
 

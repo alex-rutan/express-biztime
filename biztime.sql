@@ -21,12 +21,23 @@ CREATE TABLE invoices (
   paid_date DATE
 );
 
+CREATE TABLE industries (
+  code TEXT PRIMARY KEY,
+  industry  TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE industries_companies (
+  ind_code TEXT NOT NULL REFERENCES industries ON DELETE CASCADE,
+  comp_code TEXT NOT NULL REFERENCES companies ON DELETE CASCADE
+);
+
 
 
 
 INSERT INTO companies
 VALUES ('apple', 'Apple Computer', 'Maker of OSX.'),
-       ('ibm', 'IBM', 'Big blue.');
+       ('ibm', 'IBM', 'Big blue.'),
+       ('tesla', 'TESLA', 'evil company');
 
 INSERT INTO invoices (comp_code, amt, paid, paid_date)
 VALUES ('apple', 100, FALSE, NULL),
@@ -34,6 +45,17 @@ VALUES ('apple', 100, FALSE, NULL),
        ('apple', 300, TRUE, '2018-01-01'),
        ('ibm', 400, FALSE, NULL);
 
+INSERT INTO industries
+VALUES ('acct', 'Accounting'),
+        ('tech', 'Technology'),
+        ('auto', 'Automobile');
+
+INSERT INTO industries_companies
+VALUES ('tech', 'apple'),
+        ('auto', 'tesla'),
+        ('tech', 'tesla'),
+        ('acct', 'ibm'),
+        ('tech', 'ibm');
 
 \echo 'Delete and recreate biztime_test db?'
 \prompt 'Return for yes or control-C to cancel > ' foo
