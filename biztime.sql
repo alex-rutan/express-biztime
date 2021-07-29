@@ -21,6 +21,9 @@ CREATE TABLE invoices (
   paid_date DATE
 );
 
+
+
+
 INSERT INTO companies
 VALUES ('apple', 'Apple Computer', 'Maker of OSX.'),
        ('ibm', 'IBM', 'Big blue.');

@@ -22,7 +22,6 @@ router.get("/", async function (req, res, next) {
 });
 
 
-
 /** GET /invoices: return specific invoice by id,
  * like {invoice: {id, amt, paid, add_date, paid_date, company: {code, name, description}} */
 
@@ -78,7 +77,20 @@ router.post("/", async function (req, res, next) {
 router.put("/:id", async function (req, res, next) {
     const id = req.params.id;
     const { amt } = req.body;
-
+    /*
+    const { amt, paid } = req.body;
+    
+    if (paid) {
+      const results = await db.query(
+        `UPDATE invoices
+            SET amt = $1, 
+                paid = $3
+            WHERE id = $2
+            RETURNING id, comp_code, amt, paid, add_date, paid_date`,
+        [amt, id, paid]
+      ); 
+    }
+    */
     const results = await db.query(
         `UPDATE invoices
             SET amt = $1
@@ -97,11 +109,23 @@ router.put("/:id", async function (req, res, next) {
 });
 
 
+/** DELETE /invoices/[id]: Returns {status: "deleted"} */
 
-
-
-
-
+router.delete("/:id", async function (req, res, next) {
+  const id = req.params.id;
+  const result = await db.query(
+    `DELETE FROM invoices 
+     WHERE id = $1
+     RETURNING id`,
+    [id]
+  );
+  
+  if (!result.rowCount) {
+    throw new NotFoundError();
+  }
+  
+  return res.json({ message: "deleted" });
+});
 
 
 module.exports = router;
